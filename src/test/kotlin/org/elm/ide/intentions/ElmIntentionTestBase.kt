@@ -9,6 +9,7 @@ package org.elm.ide.intentions
 
 import com.intellij.codeInsight.intention.IntentionAction
 import com.intellij.testFramework.PlatformTestUtil
+import junit.framework.ComparisonFailure
 import org.elm.fileTreeFromText
 import org.elm.lang.ElmTestBase
 import org.intellij.lang.annotations.Language
@@ -16,10 +17,13 @@ import org.intellij.lang.annotations.Language
 
 abstract class ElmIntentionTestBase(val intention: IntentionAction) : ElmTestBase() {
 
-    protected fun doAvailableTest(@Language("Elm") before: String, @Language("Elm") after: String) {
-        InlineFile(before).withCaret()
+    protected fun doAvailableTest(@Language("Elm") before: String, @Language("Elm") after: String, expectedIntentionText: String? = null) {
+        addFileWithCaretToFixture(before)
         launchAction()
         myFixture.checkResult(replaceCaretMarker(after))
+        if (expectedIntentionText != null && expectedIntentionText != intention.text) {
+            throw ComparisonFailure("Intention text did not match", expectedIntentionText, intention.text)
+        }
     }
 
     protected fun doAvailableTestWithFileTree(@Language("Elm") fileStructureBefore: String, @Language("Elm") openedFileAfter: String) {
@@ -29,7 +33,7 @@ abstract class ElmIntentionTestBase(val intention: IntentionAction) : ElmTestBas
     }
 
     protected fun doUnavailableTest(@Language("Elm") before: String) {
-        InlineFile(before).withCaret()
+        addFileWithCaretToFixture(before)
         check(intention.familyName !in myFixture.availableIntentions.mapNotNull { it.familyName }) {
             "\"$intention\" intention should not be available"
         }

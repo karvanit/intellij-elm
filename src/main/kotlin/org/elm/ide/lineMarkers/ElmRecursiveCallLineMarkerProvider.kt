@@ -15,7 +15,6 @@ import org.elm.lang.core.psi.elements.ElmFunctionCallExpr
 import org.elm.lang.core.psi.elements.ElmValueDeclaration
 import org.elm.lang.core.psi.elements.ElmValueExpr
 import org.elm.lang.core.psi.elements.ElmValueQID
-import java.util.function.Supplier
 
 /**
  * Put an icon in the gutter for top-level declarations (types, functions, values)
